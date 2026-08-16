@@ -1,0 +1,17 @@
+SCREEN_WIDTH = 1600
+SCREEN_HEIGHT = 900
+MAX_FRAMERATE = 60
+
+COLOR_BLACK = (0, 0, 0)
+
+PLAYER_WIDTH = 75
+PLAYER_HEIGHT = 75
+PLAYER_SPEED = 500
+PLAYER_BOTTOM_MARGIN = 40
+PLAYER_IMAGE = "images/player-ship.png.png"
+
+# source png is 4x12, scaled 4x
+LASER_WIDTH = 16
+LASER_HEIGHT = 48
+LASER_SPEED = 900
+LASER_IMAGE = "images/player-laser.png.png"
