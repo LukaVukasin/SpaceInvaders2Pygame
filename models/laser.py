@@ -13,3 +13,9 @@ class Laser(BaseEntity):
             constants.LASER_IMAGE,
             constants.LASER_SPEED,
         )
+
+    def update(self, dt):
+        self.y -= self.speed * dt
+
+    def is_off_screen(self):
+        return self.y + self.height < 0
