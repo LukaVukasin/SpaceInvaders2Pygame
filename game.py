@@ -1,6 +1,10 @@
+import random
 import pygame
 import constants
 from models.player import Player
+from level_loader import LevelLoader
+from levels import LEVEL_1
+from utils import Utils
 
 class Game:
 
@@ -16,6 +20,17 @@ class Game:
         self.running = True
 
         self.player_lasers = []
+
+        self.game_over = False
+
+        # None means pygame's built in font
+        self.font = pygame.font.Font(None, constants.GAME_OVER_FONT_SIZE)
+
+        self.enemy_lasers = []
+
+        self.enemy_shoot_timer = constants.ENEMY_SHOOT_INTERVAL
+
+        self.enemies = LevelLoader.load_tile_map(LEVEL_1)
 
         self.player = Player(
             (constants.SCREEN_WIDTH - constants.PLAYER_WIDTH) / 2,
@@ -40,27 +55,56 @@ class Game:
                 self.running = False
 
             # one laser per press, not per frame held
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and self.player.can_shoot():
-                    self.player_lasers.append(self.player.shoot())
+            elif not self.game_over:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE and self.player.can_shoot():
+                        self.player_lasers.append(self.player.shoot())
 
     # moves everything, dt is seconds since last frame
     def update(self, dt):
-        self.player.update(dt)
+        if not self.game_over:
+            self.player.update(dt)
 
         self.update_player_lasers(dt)
+
+        self.handle_laser_hits()
+
+        self.update_enemy_shooting(dt)
+
+        self.update_enemy_lasers(dt)
+
+        self.handle_player_hits()
 
 
     # clears screen, draws back to front, presents the frame
     def draw(self):
         self.screen.fill(constants.COLOR_BLACK)
 
-        self.player.draw(self.screen)
+        for enemy in self.enemies:
+            enemy.draw(self.screen)
+
+        if not self.game_over:
+            self.player.draw(self.screen)
 
         for laser in self.player_lasers:
             laser.draw(self.screen)
 
+        for laser in self.enemy_lasers:
+            laser.draw(self.screen)
+
+        if self.game_over:
+            self.draw_game_over()
+
         pygame.display.flip()
+
+    # centered text on top of everything else
+    def draw_game_over(self):
+        text = self.font.render(constants.GAME_OVER_TEXT, True, constants.COLOR_WHITE)
+
+        x = (constants.SCREEN_WIDTH - text.get_width()) / 2
+        y = (constants.SCREEN_HEIGHT - text.get_height()) / 2
+
+        self.screen.blit(text, (x, y))
 
     def update_player_lasers(self, dt):
         remaining_lasers = []
@@ -74,3 +118,63 @@ class Game:
         self.player_lasers = remaining_lasers
 
         print("DEBUG player lasers:", len(self.player_lasers))
+
+    def update_enemy_lasers(self, dt):
+        remaining_lasers = []
+
+        for laser in self.enemy_lasers:
+            laser.update(dt)
+
+            if not laser.is_off_screen():
+                remaining_lasers.append(laser)
+
+        self.enemy_lasers = remaining_lasers
+
+        print("DEBUG enemy lasers:", len(self.enemy_lasers))
+
+    # one shot per interval for the whole fleet, fired by a random enemy
+    def update_enemy_shooting(self, dt):
+        if not self.enemies:
+            return
+
+        self.enemy_shoot_timer -= dt
+
+        if self.enemy_shoot_timer <= 0:
+            shooter = random.choice(self.enemies)
+
+            new_enemy_laser = shooter.shoot()
+
+            self.enemy_lasers.append(new_enemy_laser)
+
+            self.enemy_shoot_timer = constants.ENEMY_SHOOT_INTERVAL
+
+    # an enemy laser that touches the player ends the game
+    def handle_player_hits(self):
+        remaining_lasers = []
+
+        for laser in self.enemy_lasers:
+            if Utils.aabb(laser, self.player):
+                self.game_over = True
+            else:
+                remaining_lasers.append(laser)
+
+        self.enemy_lasers = remaining_lasers
+
+    # a laser that touches an enemy removes both of them
+    def handle_laser_hits(self):
+        remaining_lasers = []
+
+        for laser in self.player_lasers:
+            hit_enemy = None
+
+            for enemy in self.enemies:
+                if Utils.aabb(laser, enemy):
+                    hit_enemy = enemy
+                    break
+
+            if hit_enemy is None:
+                remaining_lasers.append(laser)
+            else:
+                self.enemies.remove(hit_enemy)
+
+        self.player_lasers = remaining_lasers
