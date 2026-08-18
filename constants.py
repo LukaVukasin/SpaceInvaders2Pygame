@@ -62,4 +62,5 @@ ENEMY_LASER_HEIGHT = 15
 ENEMY_LASER_SPEED = 400
 ENEMY_LASER_IMAGE = "images/enemy-laser.png.png"
 
-ENEMY_SHOOT_INTERVAL = 0.25
+# divided by the number of enemies left, so a thinning fleet fires slower
+ENEMY_SHOOT_INTERVAL_PER_ENEMY = 5

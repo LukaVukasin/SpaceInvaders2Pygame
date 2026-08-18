@@ -38,9 +38,9 @@ class Game:
 
         self.enemy_lasers = []
 
-        self.enemy_shoot_timer = constants.ENEMY_SHOOT_INTERVAL
-
         self.enemies = LevelLoader.load_tile_map(LEVEL_1)
+
+        self.enemy_shoot_timer = self.get_enemy_shoot_interval()
 
         self.player = Player(
             (constants.SCREEN_WIDTH - constants.PLAYER_WIDTH) / 2,
@@ -186,7 +186,11 @@ class Game:
 
             self.enemy_lasers.append(new_enemy_laser)
 
-            self.enemy_shoot_timer = constants.ENEMY_SHOOT_INTERVAL
+            self.enemy_shoot_timer = self.get_enemy_shoot_interval()
+
+    # fewer enemies left means a longer wait between shots
+    def get_enemy_shoot_interval(self):
+        return constants.ENEMY_SHOOT_INTERVAL_PER_ENEMY / len(self.enemies)
 
     # an enemy laser that touches the player ends the game
     def handle_player_hits(self):
