@@ -1,10 +1,10 @@
 import pygame
 import constants
-from models.entity import BaseEntity
+from models.damageable_entity import DamageableEntity
 from models.laser import Laser
 
 
-class Player(BaseEntity):
+class Player(DamageableEntity):
 
     def __init__(self, x, y):
         super().__init__(
@@ -12,14 +12,19 @@ class Player(BaseEntity):
             y,
             constants.PLAYER_WIDTH,
             constants.PLAYER_HEIGHT,
-            constants.PLAYER_IMAGE,
+            constants.PLAYER_IMAGES,
             constants.PLAYER_SPEED,
+            constants.PLAYER_HP,
+            constants.PLAYER_HIT_IMAGE,
         )
 
         # seconds left before the next shot is allowed
         self.shoot_timer = 0
 
     def update(self, dt):
+        # keeps the hit blink timer running
+        super().update(dt)
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
