@@ -1,3 +1,6 @@
+import pygame
+
+
 class Utils:
 
     # axis aligned bounding box overlap
@@ -12,3 +15,10 @@ class Utils:
         overlaps_y = a.y < b.y + b.height and a.y + a.height > b.y
 
         return overlaps_x and overlaps_y
+
+    # loads a png and scales it to the given size
+    @staticmethod
+    def load_image(path, width, height):
+        image = pygame.image.load(path).convert_alpha()
+
+        return pygame.transform.scale(image, (width, height))

@@ -5,6 +5,13 @@ MAX_FRAMERATE = 60
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 
+STAR_COUNT = 80
+STAR_MIN_SIZE = 1
+STAR_MAX_SIZE = 3
+# nearer stars move faster, which gives the field some depth
+STAR_MIN_SPEED = 20
+STAR_MAX_SPEED = 90
+
 GAME_OVER_TEXT = "GAME OVER"
 GAME_OVER_FONT_SIZE = 120
 
@@ -12,9 +19,19 @@ PLAYER_WIDTH = 75
 PLAYER_HEIGHT = 75
 PLAYER_SPEED = 400
 PLAYER_BOTTOM_MARGIN = 40
-PLAYER_IMAGE = "images/player-ship.png.png"
-# seconds between shots
+PLAYER_HP = 3
+
+PLAYER_IMAGES = [
+    "images/player-ship.png.png",
+    "images/player-ship-damage1.png.png",
+    "images/player-ship-damage2.png.png",
+]
+
+PLAYER_HIT_IMAGE = "images/player-ship-hit.png.png"
+
 PLAYER_SHOOT_COOLDOWN = 0.5
+
+HIT_BLINK_DURATION = 0.1
 
 LASER_WIDTH = 8
 LASER_HEIGHT = 24
@@ -24,7 +41,15 @@ LASER_IMAGE = "images/player-laser.png.png"
 ENEMY_WIDTH = 72
 ENEMY_HEIGHT = 75
 ENEMY_SPEED = 0
-ENEMY_IMAGE = "images/enemy-ship.png.png"
+ENEMY_HP = 2
+
+# one image per hp level, least damaged first
+ENEMY_IMAGES = [
+    "images/enemy-ship.png.png",
+    "images/enemy-ship-damaged.png.png",
+]
+
+ENEMY_HIT_IMAGE = "images/enemy-ship-hit.png.png"
 
 ENEMY_HORIZONTAL_SPACING = 20
 ENEMY_VERTICAL_SPACING = 20

@@ -1,8 +1,8 @@
 import constants
-from models.entity import BaseEntity
+from models.undamageable_entity import UndamageableEntity
 
 
-class Laser(BaseEntity):
+class Laser(UndamageableEntity):
 
     def __init__(self, x, y):
         super().__init__(

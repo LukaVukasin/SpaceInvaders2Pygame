@@ -2,6 +2,7 @@ import random
 import pygame
 import constants
 from models.player import Player
+from models.star import Star
 from level_loader import LevelLoader
 from levels import LEVEL_1
 from utils import Utils
@@ -18,6 +19,11 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.running = True
+
+        self.stars = []
+
+        for _ in range(constants.STAR_COUNT):
+            self.stars.append(Star())
 
         self.player_lasers = []
 
@@ -65,6 +71,10 @@ class Game:
         if not self.game_over:
             self.player.update(dt)
 
+        self.update_stars(dt)
+
+        self.update_enemies(dt)
+
         self.update_player_lasers(dt)
 
         self.handle_laser_hits()
@@ -79,6 +89,9 @@ class Game:
     # clears screen, draws back to front, presents the frame
     def draw(self):
         self.screen.fill(constants.COLOR_BLACK)
+
+        for star in self.stars:
+            star.draw(self.screen)
 
         for enemy in self.enemies:
             enemy.draw(self.screen)
@@ -105,6 +118,15 @@ class Game:
         y = (constants.SCREEN_HEIGHT - text.get_height()) / 2
 
         self.screen.blit(text, (x, y))
+
+    def update_stars(self, dt):
+        for star in self.stars:
+            star.update(dt)
+
+    # enemies do not move, but they still need their hit blink timer to run
+    def update_enemies(self, dt):
+        for enemy in self.enemies:
+            enemy.update(dt)
 
     def update_player_lasers(self, dt):
         remaining_lasers = []
@@ -154,7 +176,10 @@ class Game:
 
         for laser in self.enemy_lasers:
             if Utils.aabb(laser, self.player):
-                self.game_over = True
+                self.player.take_damage()
+
+                if self.player.is_dead():
+                    self.game_over = True
             else:
                 remaining_lasers.append(laser)
 
@@ -175,6 +200,9 @@ class Game:
             if hit_enemy is None:
                 remaining_lasers.append(laser)
             else:
-                self.enemies.remove(hit_enemy)
+                hit_enemy.take_damage()
+
+                if hit_enemy.is_dead():
+                    self.enemies.remove(hit_enemy)
 
         self.player_lasers = remaining_lasers
