@@ -1,6 +1,7 @@
 import pygame
 import constants
 from models.entity import BaseEntity
+from models.laser import Laser
 
 
 class Player(BaseEntity):
@@ -15,6 +16,9 @@ class Player(BaseEntity):
             constants.PLAYER_SPEED,
         )
 
+        # seconds left before the next shot is allowed
+        self.shoot_timer = 0
+
     def update(self, dt):
         keys = pygame.key.get_pressed()
 
@@ -25,7 +29,17 @@ class Player(BaseEntity):
 
         self.handle_wall_collision()
 
-    # stops the ship at the left and right edges of the window
+        if self.shoot_timer > 0:
+            self.shoot_timer -= dt
+
+    def shoot(self):
+        self.shoot_timer = constants.PLAYER_SHOOT_COOLDOWN
+
+        x = self.x + self.width / 2 - constants.LASER_WIDTH / 2
+        y = self.y - constants.LASER_HEIGHT
+
+        return Laser(x, y)
+
     def handle_wall_collision(self):
         max_x = constants.SCREEN_WIDTH - self.width
 
@@ -33,3 +47,6 @@ class Player(BaseEntity):
             self.x = 0
         elif self.x >= max_x:
             self.x = max_x
+
+    def can_shoot(self):
+        return self.shoot_timer <= 0

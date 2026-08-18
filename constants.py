@@ -6,12 +6,13 @@ COLOR_BLACK = (0, 0, 0)
 
 PLAYER_WIDTH = 75
 PLAYER_HEIGHT = 75
-PLAYER_SPEED = 500
+PLAYER_SPEED = 400
 PLAYER_BOTTOM_MARGIN = 40
 PLAYER_IMAGE = "images/player-ship.png.png"
+# seconds between shots
+PLAYER_SHOOT_COOLDOWN = 0.5
 
-# source png is 4x12, scaled 4x
-LASER_WIDTH = 16
-LASER_HEIGHT = 48
-LASER_SPEED = 900
+LASER_WIDTH = 8
+LASER_HEIGHT = 24
+LASER_SPEED = 600
 LASER_IMAGE = "images/player-laser.png.png"
