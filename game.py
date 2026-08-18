@@ -27,7 +27,11 @@ class Game:
 
         self.player_lasers = []
 
+        self.game_finished = False
+
         self.game_over = False
+
+        self.game_won = False
 
         # None means pygame's built in font
         self.font = pygame.font.Font(None, constants.GAME_OVER_FONT_SIZE)
@@ -61,14 +65,14 @@ class Game:
                 self.running = False
 
             # one laser per press, not per frame held
-            elif not self.game_over:
+            elif not self.game_finished:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.player.can_shoot():
                         self.player_lasers.append(self.player.shoot())
 
     # moves everything, dt is seconds since last frame
     def update(self, dt):
-        if not self.game_over:
+        if not self.game_finished:
             self.player.update(dt)
 
         self.update_stars(dt)
@@ -85,6 +89,8 @@ class Game:
 
         self.handle_player_hits()
 
+        self.check_win()
+
 
     # clears screen, draws back to front, presents the frame
     def draw(self):
@@ -96,7 +102,7 @@ class Game:
         for enemy in self.enemies:
             enemy.draw(self.screen)
 
-        if not self.game_over:
+        if not self.game_finished:
             self.player.draw(self.screen)
 
         for laser in self.player_lasers:
@@ -105,19 +111,31 @@ class Game:
         for laser in self.enemy_lasers:
             laser.draw(self.screen)
 
-        if self.game_over:
-            self.draw_game_over()
+        if self.game_finished:
+            self.draw_game_finished()
 
         pygame.display.flip()
 
-    # centered text on top of everything else
-    def draw_game_over(self):
-        text = self.font.render(constants.GAME_OVER_TEXT, True, constants.COLOR_WHITE)
+    # centered text on top of everything else, wording depends on which flag is set
+    def draw_game_finished(self):
+        if self.game_won:
+            message = constants.WIN_TEXT
+        else:
+            message = constants.GAME_OVER_TEXT
+
+        text = self.font.render(message, True, constants.COLOR_WHITE)
 
         x = (constants.SCREEN_WIDTH - text.get_width()) / 2
         y = (constants.SCREEN_HEIGHT - text.get_height()) / 2
 
         self.screen.blit(text, (x, y))
+
+    # an empty fleet is a win
+    def check_win(self):
+        if not self.enemies:
+            self.game_won = True
+
+            self.game_finished = True
 
     def update_stars(self, dt):
         for star in self.stars:
@@ -180,6 +198,8 @@ class Game:
 
                 if self.player.is_dead():
                     self.game_over = True
+
+                    self.game_finished = True
             else:
                 remaining_lasers.append(laser)
 
