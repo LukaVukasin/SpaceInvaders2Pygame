@@ -1,5 +1,5 @@
 from models.entity import BaseEntity
-from utils import Utils
+from helpers.utils import Utils
 
 
 class UndamageableEntity(BaseEntity):

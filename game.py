@@ -3,9 +3,9 @@ import pygame
 import constants
 from models.player import Player
 from models.star import Star
-from level_loader import LevelLoader
-from levels import LEVEL_1
-from utils import Utils
+from helpers.level_loader import LevelLoader
+from helpers.levels import LEVEL_1
+from helpers.utils import Utils
 
 class Game:
 
