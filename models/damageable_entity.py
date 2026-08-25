@@ -5,7 +5,6 @@ from helpers.utils import Utils
 
 class DamageableEntity(BaseEntity):
 
-    # image_paths holds one image per hp level, least damaged first
     def __init__(self, x, y, width, height, image_paths, speed, hp, hit_image_path):
         super().__init__(x, y, width, height, speed)
 
@@ -42,7 +41,6 @@ class DamageableEntity(BaseEntity):
     def is_dead(self):
         return self.hp <= 0
 
-    # picks the sprite matching how much damage has been taken
     def select_image(self):
         if self.is_dead():
             return

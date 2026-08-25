@@ -4,11 +4,11 @@ import constants
 from models.player import Player
 from models.star import Star
 from helpers.level_loader import LevelLoader
-from helpers.levels import LEVEL_1
+from helpers.levels import LEVEL_1, LEVEL_2
 from helpers.utils import Utils
 
 class Game:
-
+    #
     def __init__(self):
         self.screen = pygame.display.set_mode(
             (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT),
@@ -33,12 +33,11 @@ class Game:
 
         self.game_won = False
 
-        # None means pygame's built in font
         self.font = pygame.font.Font(None, constants.GAME_OVER_FONT_SIZE)
 
         self.enemy_lasers = []
 
-        self.enemies = LevelLoader.load_tile_map(LEVEL_1)
+        self.enemies = LevelLoader.load_tile_map(LEVEL_2)
 
         self.enemy_shoot_timer = self.get_enemy_shoot_interval()
 
@@ -50,27 +49,21 @@ class Game:
     # main game loop
     def run(self):
         while self.running:
-            # milliseconds since last frame, capped at MAX_FRAMERATE
             dt_ms = self.clock.tick(constants.MAX_FRAMERATE)
             dt = dt_ms / 1000
 
             self.handle_events()
             self.update(dt)
             self.draw()
-
-    # reads player input, does not move anything
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
 
-            # one laser per press, not per frame held
             elif not self.game_finished:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.player.can_shoot():
                         self.player_lasers.append(self.player.shoot())
-
-    # moves everything, dt is seconds since last frame
     def update(self, dt):
         if not self.game_finished:
             self.player.update(dt)
@@ -91,8 +84,6 @@ class Game:
 
         self.check_win()
 
-
-    # clears screen, draws back to front, presents the frame
     def draw(self):
         self.screen.fill(constants.COLOR_BLACK)
 
@@ -116,7 +107,6 @@ class Game:
 
         pygame.display.flip()
 
-    # centered text on top of everything else, wording depends on which flag is set
     def draw_game_finished(self):
         if self.game_won:
             message = constants.WIN_TEXT
@@ -130,13 +120,11 @@ class Game:
 
         self.screen.blit(text, (x, y))
 
-    # an empty fleet is a win
     def check_win(self):
         if not self.enemies:
             self.game_won = True
 
             self.game_finished = True
-
     def update_stars(self, dt):
         for star in self.stars:
             star.update(dt)
@@ -192,7 +180,6 @@ class Game:
     def get_enemy_shoot_interval(self):
         return constants.ENEMY_SHOOT_INTERVAL_PER_ENEMY / len(self.enemies)
 
-    # an enemy laser that touches the player ends the game
     def handle_player_hits(self):
         remaining_lasers = []
 
@@ -209,7 +196,7 @@ class Game:
 
         self.enemy_lasers = remaining_lasers
 
-    # a laser that touches an enemy removes both of them
+    # a laser that hits an enemy removes both of them
     def handle_laser_hits(self):
         remaining_lasers = []
 

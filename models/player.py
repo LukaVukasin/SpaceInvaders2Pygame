@@ -18,7 +18,6 @@ class Player(DamageableEntity):
             constants.PLAYER_HIT_IMAGE,
         )
 
-        # seconds left before the next shot is allowed
         self.shoot_timer = 0
 
     def update(self, dt):

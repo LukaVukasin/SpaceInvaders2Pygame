@@ -4,7 +4,6 @@ import pygame
 class BaseEntity:
 
     def __init__(self, x, y, width, height, speed):
-        # floats, because Rect coordinates are integers and would truncate slow movement
         self.x = float(x)
         self.y = float(y)
 
