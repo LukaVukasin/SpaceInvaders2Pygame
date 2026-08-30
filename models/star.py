@@ -1,5 +1,4 @@
 import random
-
 import pygame
 import constants
 from models.entity import BaseEntity

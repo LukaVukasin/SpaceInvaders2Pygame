@@ -8,7 +8,6 @@ COLOR_WHITE = (255, 255, 255)
 STAR_COUNT = 80
 STAR_MIN_SIZE = 1
 STAR_MAX_SIZE = 3
-# nearer stars move faster, which gives the field some depth
 STAR_MIN_SPEED = 20
 STAR_MAX_SPEED = 90
 

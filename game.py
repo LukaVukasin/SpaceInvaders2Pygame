@@ -8,7 +8,6 @@ from helpers.levels import LEVEL_1, LEVEL_2
 from helpers.utils import Utils
 
 class Game:
-    #
     def __init__(self):
         self.screen = pygame.display.set_mode(
             (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT),
@@ -196,7 +195,6 @@ class Game:
 
         self.enemy_lasers = remaining_lasers
 
-    # a laser that hits an enemy removes both of them
     def handle_laser_hits(self):
         remaining_lasers = []
 

@@ -14,7 +14,6 @@ class EnemyLaser(UndamageableEntity):
             constants.ENEMY_LASER_SPEED,
         )
 
-    # positive, because this one travels down the screen
     def update(self, dt):
         self.y += self.speed * dt
 
