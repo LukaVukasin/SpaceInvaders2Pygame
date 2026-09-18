@@ -28,6 +28,8 @@ class Game:
 
         self.game_finished = False
 
+        self.paused = False
+
         self.game_over = False
 
         self.game_won = False
@@ -61,9 +63,15 @@ class Game:
 
             elif not self.game_finished:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and self.player.can_shoot():
+                    if event.key == pygame.K_p:
+                        self.paused = not self.paused
+
+                    elif event.key == pygame.K_SPACE and not self.paused and self.player.can_shoot():
                         self.player_lasers.append(self.player.shoot())
     def update(self, dt):
+        if self.paused:
+            return
+
         if not self.game_finished:
             self.player.update(dt)
 
@@ -103,6 +111,8 @@ class Game:
 
         if self.game_finished:
             self.draw_game_finished()
+        elif self.paused:
+            self.draw_centered_text(constants.PAUSED_TEXT)
 
         pygame.display.flip()
 
@@ -112,6 +122,9 @@ class Game:
         else:
             message = constants.GAME_OVER_TEXT
 
+        self.draw_centered_text(message)
+
+    def draw_centered_text(self, message):
         text = self.font.render(message, True, constants.COLOR_WHITE)
 
         x = (constants.SCREEN_WIDTH - text.get_width()) / 2
